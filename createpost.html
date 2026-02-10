@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZYLOS | Create Post</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+
+    <div class="container">
+        <header class="app-header glass-panel">
+            <i class="fas fa-arrow-left" onclick="window.history.back()" style="font-size:1.2rem; cursor:pointer;"></i>
+            <h2 style="font-size:1.4rem;">New Post</h2>
+            <button class="btn-primary" onclick="doPost()" style="padding:5px 15px; font-size:0.9rem;">Share</button>
+        </header>
+
+        <div class="glass-panel floating"
+            style="margin-top:20px; padding:20px; min-height:60vh; display:flex; flex-direction:column; gap:20px;">
+
+            <!-- Media Upload Area -->
+            <div id="upload-zone"
+                style="border:2px dashed #444; border-radius:15px; padding:40px; text-align:center; cursor:pointer;"
+                onclick="document.getElementById('file-input').click()">
+                <i class="fas fa-cloud-upload-alt" style="font-size:3rem; color:#00d2ff; margin-bottom:10px;"></i>
+                <p style="color:#aaa;">Tap to upload photos or videos</p>
+                <input type="file" id="file-input" accept="image/*,video/*" style="display:none"
+                    onchange="window.handlePostPreview(this)">
+            </div>
+
+            <!-- Preview Area -->
+            <div id="preview-area">
+                <!-- Dynamic Content -->
+            </div>
+
+            <!-- Caption -->
+            <div style="display:flex; align-items:start; gap:10px;">
+                <img id="current-user-avatar" class="user-avatar-sm" src="https://ui-avatars.com/api/?name=Me">
+                <textarea id="caption-input" class="auth-input" rows="4" placeholder="Write a caption..."
+                    style="background:transparent; border:none; resize:none; font-size:1rem;"></textarea>
+            </div>
+
+        </div>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav glass-panel">
+            <a href="home.html" class="nav-item"><i class="fas fa-home"></i></a>
+            <a href="search.html" class="nav-item"><i class="fas fa-search"></i></a>
+            <a href="createpost.html" class="nav-item active" style="color:#00d2ff; transform: scale(1.2);"><i
+                    class="fas fa-plus-circle"></i></a>
+            <a href="explore.html" class="nav-item"><i class="fas fa-compass"></i></a>
+            <a href="profile.html" class="nav-item"><i class="fas fa-user"></i></a>
+        </nav>
+    </div>
+
+    <script src="js/app.js"></script>
+    <script>
+        // Set Avatar on Load
+        document.addEventListener('DOMContentLoaded', () => {
+            if (Auth.currentUser) {
+                document.getElementById('current-user-avatar').src = Auth.currentUser.avatar;
+            }
+        });
+
+        // Redefine handlePostPreview to fix scope issues if any
+        window.handlePostPreview = function (input) {
+            const file = input.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    document.getElementById('upload-zone').style.display = 'none';
+                    document.getElementById('preview-area').innerHTML = `
+                    <div style="position:relative;">
+                        ${file.type.startsWith('video')
+                            ? `<video src="${e.target.result}" style="width:100%; border-radius:10px; max-height:400px; object-fit:contain;" controls></video>`
+                            : `<img src="${e.target.result}" style="width:100%; border-radius:10px; max-height:400px; object-fit:contain;">`
+                        }
+                        <div style="position:absolute; top:10px; right:10px; background:rgba(0,0,0,0.6); width:30px; height:30px; display:flex; justify-content:center; align-items:center; border-radius:50%; cursor:pointer;" 
+                             onclick="resetUpload()">
+                            <i class="fas fa-times"></i>
+                        </div>
+                    </div>`;
+                    window.tempPostData = { content: e.target.result, type: file.type.startsWith('video') ? 'video' : 'image' };
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        window.resetUpload = function () {
+            document.getElementById('upload-zone').style.display = 'block';
+            document.getElementById('preview-area').innerHTML = '';
+            document.getElementById('file-input').value = '';
+            window.tempPostData = null;
+        }
+
+        window.doPost = function () {
+            if (!window.tempPostData) {
+                alert("Please select a photo or video!");
+                return;
+            }
+            const caption = document.getElementById('caption-input').value;
+            Feed.createPost(window.tempPostData.type, window.tempPostData.content, caption);
+            window.location.href = 'home.html';
+        }
+    </script>
+</body>
+
+</html>

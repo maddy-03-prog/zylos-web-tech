@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZYLOS | Reels</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body style="overflow:hidden;">
+
+    <div class="reels-wrapper">
+        <!-- REEL 1 -->
+        <div class="reel-full glass-panel" style="border:none; border-radius:0;">
+            <video src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"
+                class="img-cover" loop autoplay muted onclick="this.muted=!this.muted"></video>
+            <div style="position:absolute; bottom:80px; left:15px; text-shadow:0 1px 3px black;">
+                <h3>@zylos_official</h3>
+                <p>Welcome to Zylos Reels. Try scrolling! 🔥</p>
+            </div>
+            <div
+                style="position:absolute; bottom:100px; right:15px; display:flex; flex-direction:column; gap:20px; text-align:center;">
+                <i class="fas fa-heart action-icon"></i>
+                <span>2.4k</span>
+                <i class="fas fa-comment action-icon"></i>
+                <span>300</span>
+                <i class="fas fa-share action-icon"></i>
+            </div>
+        </div>
+
+        <!-- REEL 2 -->
+        <div class="reel-full glass-panel" style="border:none; border-radius:0;">
+            <video src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"
+                class="img-cover" loop muted onclick="this.muted=!this.muted"></video>
+            <div style="position:absolute; bottom:80px; left:15px; text-shadow:0 1px 3px black;">
+                <h3>@nature_lover</h3>
+                <p>Check this out! #nature</p>
+            </div>
+            <div
+                style="position:absolute; bottom:100px; right:15px; display:flex; flex-direction:column; gap:20px; text-align:center;">
+                <i class="fas fa-heart action-icon"></i>
+                <span>1.1k</span>
+                <i class="fas fa-comment action-icon"></i>
+                <span>92</span>
+            </div>
+        </div>
+
+        <!-- REEL 3 -->
+        <div class="reel-full glass-panel" style="border:none; border-radius:0;">
+            <video src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+                class="img-cover" loop muted onclick="this.muted=!this.muted"></video>
+            <div style="position:absolute; bottom:80px; left:15px; text-shadow:0 1px 3px black;">
+                <h3>@animation_daily</h3>
+                <p>Classic open movie project.</p>
+            </div>
+        </div>
+    </div>
+
+    <nav class="bottom-nav glass-panel" style="background:transparent; border-top:none;">
+        <a href="home.html" class="nav-item"><i class="fas fa-home"></i></a>
+        <a href="search.html" class="nav-item"><i class="fas fa-search"></i></a>
+        <a href="reels.html" class="nav-item active"><i class="fas fa-video"></i></a>
+        <a href="explore.html" class="nav-item"><i class="fas fa-compass"></i></a>
+        <a href="profile.html" class="nav-item"><i class="fas fa-user"></i></a>
+    </nav>
+
+    <script src="js/app.js"></script>
+    <script>
+        // Intersection Observer for Auto-Play
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                const vid = entry.target.querySelector('video');
+                if (entry.isIntersecting) vid.play();
+                else vid.pause();
+            });
+        }, { threshold: 0.6 });
+
+        document.querySelectorAll('.reel-full').forEach(el => observer.observe(el));
+    </script>
+</body>
+
+</html>

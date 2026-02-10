@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZYLOS | Profile</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Profile Specific Styles */
+        .profile-top-section {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .profile-image-container {
+            margin-right: 20px;
+            flex-shrink: 0;
+        }
+
+        .profile-avatar-lg {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 2px solid var(--accent-color);
+            object-fit: cover;
+            padding: 2px;
+        }
+
+        .profile-stats-row {
+            display: flex;
+            justify-content: space-around;
+            flex-grow: 1;
+            text-align: center;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .stat-item:active {
+            opacity: 0.6;
+        }
+
+        .stat-number {
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: #fff;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--secondary-text);
+        }
+
+        .profile-bio-section {
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        .profile-username {
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+
+        .profile-bio-text {
+            font-size: 0.95rem;
+            line-height: 1.4;
+            color: #ddd;
+            margin-bottom: 5px;
+        }
+
+        .location-tag {
+            font-size: 0.85rem;
+            color: var(--accent-color);
+            margin-top: 5px;
+        }
+
+        .profile-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .btn-profile {
+            width: 100%;
+            padding: 8px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+            transition: background 0.2s;
+        }
+
+        /* Modal fixes */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 2000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        /* Grid Animations */
+        .grid-item {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 1/1;
+            overflow: hidden;
+            border-radius: 2px;
+            cursor: pointer;
+            opacity: 0;
+            animation: scaleIn 0.4s ease forwards;
+        }
+
+        .grid-item:hover .img-cover {
+            transform: scale(1.05);
+        }
+
+        .grid-item .img-cover {
+            transition: transform 0.3s ease;
+        }
+
+        .video-indicator {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            color: white;
+            font-size: 1rem;
+            text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* User List Modal */
+        .user-list-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .user-list-item:last-child {
+            border-bottom: none;
+        }
+
+        .user-list-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+            object-fit: cover;
+        }
+
+        .user-list-info {
+            flex-grow: 1;
+        }
+
+        .btn-follow-sm {
+            padding: 5px 15px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-follow-active {
+            background: transparent;
+            border: 1px solid #555;
+            color: #fff;
+        }
+
+        .btn-follow-action {
+            background: var(--accent-color);
+            color: #000;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <!-- Header -->
+        <div id="profile-header" class="glass-panel" style="margin-top:20px; padding:20px;">
+            <div class="profile-top-section">
+                <div class="profile-image-container">
+                    <img id="p-avatar" src="" class="profile-avatar-lg" alt="Profile">
+                </div>
+
+                <div class="profile-stats-row">
+                    <div class="stat-item">
+                        <span id="p-posts-count" class="stat-number">0</span>
+                        <span class="stat-label">Posts</span>
+                    </div>
+                    <div class="stat-item" onclick="Profile.openFollowers()">
+                        <span id="p-followers" class="stat-number">0</span>
+                        <span class="stat-label">Followers</span>
+                    </div>
+                    <div class="stat-item" onclick="Profile.openFollowing()">
+                        <span id="p-following" class="stat-number">0</span>
+                        <span class="stat-label">Following</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-bio-section">
+                <div id="p-username" class="profile-username">Username</div>
+                <div id="p-bio" class="profile-bio-text">Bio description...</div>
+                <div id="user-location" class="location-tag"></div>
+            </div>
+
+            <div class="profile-actions">
+                <button class="btn-glass btn-profile" onclick="openEditModal()">Edit Profile</button>
+                <button class="btn-glass btn-profile"
+                    style="color:var(--danger-color); border-color:rgba(255, 71, 87, 0.3);"
+                    onclick="Auth.logout()">Logout</button>
+            </div>
+        </div>
+
+        <!-- Posts Grid -->
+        <div id="profile-grid" class="profile-posts-grid" style="margin-top:15px; margin-bottom:80px; gap:2px;">
+            <!-- Posts injected by JS -->
+        </div>
+
+        <!-- Empty State Template (Hidden by default) -->
+        <div id="empty-state" class="hidden flex-center" style="flex-direction:column; padding:40px; color:#666;">
+            <i class="fas fa-camera" style="font-size:3rem; margin-bottom:15px; opacity:0.5;"></i>
+            <p>No Posts Yet</p>
+        </div>
+
+        <!-- Edit Profile Modal -->
+        <div id="edit-profile-modal" class="modal-overlay">
+            <div class="modal-content glass-panel" style="padding:20px; width:90%; max-width:400px;">
+                <h3 style="margin-bottom:20px; text-align:center;">Edit Profile</h3>
+                <div style="text-align:center; margin-bottom:20px;">
+                    <label for="edit-avatar-input" style="cursor:pointer; display:inline-block; position:relative;">
+                        <img id="edit-avatar-preview" src=""
+                            style="width:100px; height:100px; border-radius:50%; border:2px dashed var(--accent-color); object-fit:cover;">
+                        <div
+                            style="position:absolute; background:var(--accent-color); width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; bottom:0; right:0;">
+                            <i class="fas fa-camera" style="color:white; font-size:0.8rem;"></i>
+                        </div>
+                    </label>
+                    <input type="file" id="edit-avatar-input" accept="image/*" style="display:none"
+                        onchange="previewAvatar(this)">
+                </div>
+                <div style="display:flex; flex-direction:column; gap:15px;">
+                    <input type="text" id="edit-username" class="auth-input" placeholder="Username">
+                    <textarea id="edit-bio" class="auth-input" rows="3" placeholder="Bio"></textarea>
+                </div>
+                <div class="flex-center" style="justify-content:space-between; margin-top:25px;">
+                    <button class="btn-glass" onclick="closeEditModal()">Cancel</button>
+                    <button class="btn-primary" onclick="Profile.saveProfile()">Save</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Users List Modal (Followers/Following) -->
+        <div id="users-list-modal" class="modal-overlay">
+            <div class="modal-content glass-panel"
+                style="padding:0; width:90%; max-width:400px; max-height:80vh; display:flex; flex-direction:column;">
+                <div
+                    style="padding:15px; border-bottom:1px solid rgba(255,255,255,0.1); display:flex; justify-content:space-between; align-items:center;">
+                    <h3 id="users-modal-title">List</h3>
+                    <i class="fas fa-times"
+                        onclick="document.getElementById('users-list-modal').classList.remove('active')"
+                        style="cursor:pointer;"></i>
+                </div>
+                <div id="users-list-container" style="overflow-y:auto; padding:0 10px;">
+                    <!-- List Items -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Post View Modal -->
+        <div id="view-post-modal" class="modal-overlay">
+            <div class="modal-content glass-panel" style="padding:0; width:95%; max-width:500px; overflow:hidden;">
+                <div class="post-header" style="background:rgba(0,0,0,0.8);">
+                    <img id="vp-avatar" src="" class="user-avatar-sm">
+                    <span id="vp-username" style="font-weight:600">Username</span>
+                    <i class="fas fa-times" onclick="Profile.closePostModal()"
+                        style="margin-left:auto; cursor:pointer;"></i>
+                </div>
+
+                <div id="vp-media-container"
+                    style="background:black; display:flex; align-items:center; justify-content:center; min-height:300px;">
+                    <!-- Media Injected -->
+                </div>
+
+                <div style="padding:15px;">
+                    <div style="display:flex; gap:15px; margin-bottom:10px;">
+                        <i class="fas fa-heart action-icon" style="color:var(--danger-color);"></i>
+                        <i class="fas fa-comment action-icon"></i>
+                    </div>
+                    <div id="vp-caption" style="font-size:0.9rem; color:#ddd;">Caption...</div>
+                    <div id="vp-date" style="font-size:0.8rem; color:#777; margin-top:5px;">Date</div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav glass-panel">
+            <a href="home.html" class="nav-item"><i class="fas fa-home"></i></a>
+            <a href="search.html" class="nav-item"><i class="fas fa-search"></i></a>
+            <a href="createpost.html" class="nav-item"><i class="fas fa-plus-circle"></i></a>
+            <a href="explore.html" class="nav-item"><i class="fas fa-compass"></i></a>
+            <a href="profile.html" class="nav-item active"><i class="fas fa-user"></i></a>
+        </nav>
+    </div>
+
+    <script src="js/app.js"></script>
+    <script>
+        // Local Modal Helpers
+        function openEditModal() {
+            const m = document.getElementById('edit-profile-modal');
+            m.classList.add('active');
+            m.style.display = 'flex';
+            if (Auth && Auth.currentUser) {
+                document.getElementById('edit-username').value = Auth.currentUser.username;
+                document.getElementById('edit-bio').value = Auth.currentUser.bio;
+                document.getElementById('edit-avatar-preview').src = Auth.currentUser.avatar;
+            }
+        }
+        function closeEditModal() {
+            document.getElementById('edit-profile-modal').classList.remove('active');
+            document.getElementById('edit-profile-modal').style.display = 'none';
+        }
+        function previewAvatar(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function (e) { document.getElementById('edit-avatar-preview').src = e.target.result; }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+    </script>
+</body>
+
+</html>
