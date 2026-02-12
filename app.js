@@ -181,7 +181,7 @@ const Feed = {
           <span style="font-weight:600">${user.username}</span>
           <span style="margin-left:auto; font-size:0.8rem; color:#888;">${Utils.timeAgo(post.timestamp)}</span>
         </div>
-        ${post.type === 'video' ? `<video src="${post.content}" class="post-media" controls loop></video>` : `<img src="${post.content}" class="post-media">`}
+        ${post.type === 'video' ? `<video class="post-media" controls muted loop playsinline preload="auto"><source src="${post.content}" type="video/mp4"></video>` : `<img src="${post.content}" class="post-media">`}
         <div class="post-actions">
            <i class="fas fa-heart action-icon ${isLiked ? 'liked' : ''}" onclick="Feed.toggleLike('${post.id}', this)"></i>
            <i class="fas fa-comment action-icon" onclick="document.getElementById('comments-${post.id}').classList.toggle('hidden')"></i>
@@ -233,7 +233,7 @@ const Profile = {
             grid.innerHTML = myPosts.map((p, index) => `
                 <div class="grid-item" style="animation-delay: ${index * 0.05}s" onclick="Profile.openPost('${p.id}')">
                    ${p.type === 'video'
-                    ? `<video src="${p.content}" class="img-cover"></video><div class="video-icon-overlay"><i class="fas fa-play"></i></div>`
+                    ? `<video class="img-cover" controls muted loop playsinline preload="auto"><source src="${p.content}" type="video/mp4"></video><div class="video-icon-overlay"><i class="fas fa-play"></i></div>`
                     : `<img src="${p.content}" class="img-cover">`
                 }
                 </div>
@@ -277,7 +277,7 @@ const Profile = {
 
         const container = document.getElementById('vp-media-container');
         if (post.type === 'video') {
-            container.innerHTML = `<video src="${post.content}" controls autoplay loop style="max-height:60vh; max-width:100%; object-fit:contain;"></video>`;
+            container.innerHTML = `<video class="img-cover" controls muted loop playsinline preload="auto" style="width:100%; object-fit:contain;"><source src="${post.content}" type="video/mp4"></video>`;
         } else {
             container.innerHTML = `<img src="${post.content}" style="max-height:60vh; max-width:100%; object-fit:contain;">`;
         }
@@ -374,7 +374,7 @@ const Profile = {
             const display = [...Feed.posts].sort(() => 0.5 - Math.random());
             grid.innerHTML = display.map((p, i) => `
                 <div class="grid-item floating" style="animation-delay:${i * 0.1}s">
-                   ${p.type === 'video' ? `<video src="${p.content}" class="img-cover"></video>` : `<img src="${p.content}" class="img-cover">`}
+                   ${p.type === 'video' ? `<video class="img-cover" controls muted loop playsinline preload="auto"><source src="${p.content}" type="video/mp4"></video>` : `<img src="${p.content}" class="img-cover">`}
                 </div>
              `).join('');
         }
@@ -391,7 +391,7 @@ const Reels = {
                 return;
             }
             document.getElementById('reels-container').innerHTML = videos.map(v =>
-                `<div class="reel-full glass-panel" style="border:none;"><video src="${v.content}" class="img-cover reel-video" loop muted onclick="this.muted=!this.muted; this.play()"></video></div>`
+                `<div class="reel-full glass-panel" style="border:none;"><video class="img-cover reel-video" controls muted loop playsinline preload="auto" onclick="this.muted=!this.muted; this.play()"><source src="${v.content}" type="video/mp4"></video></div>`
             ).join('');
             // Simple Observer
             const observer = new IntersectionObserver((entries) => {
@@ -436,7 +436,7 @@ window.handlePostPreview = function (input) {
             window.tempType = file.type.startsWith('video') ? 'video' : 'image';
             document.getElementById('upload-zone').style.display = 'none';
             document.getElementById('preview-area').innerHTML = `
-               ${window.tempType === 'video' ? `<video src="${e.target.result}" style="max-height:400px; width:100%; border-radius:10px;" controls></video>` : `<img src="${e.target.result}" style="max-height:400px; width:100%; object-fit:contain; border-radius:10px;">`}
+               ${window.tempType === 'video' ? `<video style="width:100%; border-radius:10px;" controls muted playsinline loop preload="auto"><source src="${e.target.result}" type="video/mp4"></video>` : `<img src="${e.target.result}" style="max-height:400px; width:100%; object-fit:contain; border-radius:10px;">`}
                <div style="text-align:center; padding:10px; color:var(--accent-color); cursor:pointer;" onclick="window.location.reload()">Remove</div>
             `;
         };

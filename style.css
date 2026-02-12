@@ -33,6 +33,12 @@
     -webkit-tap-highlight-color: transparent;
 }
 
+video {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
 /* 
    CORE LAYOUT SYSTEM 
    On Desktop: Body is static dark background. Container is the "Phone" screen.
@@ -255,7 +261,8 @@ body {
 .post-media {
     width: 100%;
     display: block;
-    max-height: 550px;
+    width: 100%;
+    display: block;
     object-fit: cover;
     background: #111;
 }
