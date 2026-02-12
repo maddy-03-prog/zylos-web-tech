@@ -181,7 +181,7 @@ const Feed = {
           <span style="font-weight:600">${user.username}</span>
           <span style="margin-left:auto; font-size:0.8rem; color:#888;">${Utils.timeAgo(post.timestamp)}</span>
         </div>
-        ${post.type === 'video' ? `<video class="post-media" controls muted loop playsinline preload="auto"><source src="${post.content}" type="video/mp4"></video>` : `<img src="${post.content}" class="post-media">`}
+        ${DOM.renderMedia(post, 'post-media')}
         <div class="post-actions">
            <i class="fas fa-heart action-icon ${isLiked ? 'liked' : ''}" onclick="Feed.toggleLike('${post.id}', this)"></i>
            <i class="fas fa-comment action-icon" onclick="document.getElementById('comments-${post.id}').classList.toggle('hidden')"></i>
@@ -232,10 +232,8 @@ const Profile = {
             document.getElementById('empty-state').classList.add('hidden');
             grid.innerHTML = myPosts.map((p, index) => `
                 <div class="grid-item" style="animation-delay: ${index * 0.05}s" onclick="Profile.openPost('${p.id}')">
-                   ${p.type === 'video'
-                    ? `<video class="img-cover" controls muted loop playsinline preload="auto"><source src="${p.content}" type="video/mp4"></video><div class="video-icon-overlay"><i class="fas fa-play"></i></div>`
-                    : `<img src="${p.content}" class="img-cover">`
-                }
+                    ${DOM.renderMedia(p, 'img-cover')}
+                    ${p.type === 'video' ? '<div class="video-icon-overlay"><i class="fas fa-play"></i></div>' : ''}
                 </div>
             `).join('');
         }
@@ -276,11 +274,7 @@ const Profile = {
         document.getElementById('vp-date').innerText = Utils.timeAgo(post.timestamp);
 
         const container = document.getElementById('vp-media-container');
-        if (post.type === 'video') {
-            container.innerHTML = `<video class="img-cover" controls muted loop playsinline preload="auto" style="width:100%; object-fit:contain;"><source src="${post.content}" type="video/mp4"></video>`;
-        } else {
-            container.innerHTML = `<img src="${post.content}" style="max-height:60vh; max-width:100%; object-fit:contain;">`;
-        }
+        container.innerHTML = DOM.renderMedia(post, 'img-cover', 'width:100%; object-fit:contain; max-height:60vh;');
 
         modal.classList.add('active');
         modal.style.display = 'flex';
@@ -374,7 +368,7 @@ const Profile = {
             const display = [...Feed.posts].sort(() => 0.5 - Math.random());
             grid.innerHTML = display.map((p, i) => `
                 <div class="grid-item floating" style="animation-delay:${i * 0.1}s">
-                   ${p.type === 'video' ? `<video class="img-cover" controls muted loop playsinline preload="auto"><source src="${p.content}" type="video/mp4"></video>` : `<img src="${p.content}" class="img-cover">`}
+                   ${DOM.renderMedia(p, 'img-cover')}
                 </div>
              `).join('');
         }

@@ -75,7 +75,7 @@
                     document.getElementById('preview-area').innerHTML = `
                     <div style="position:relative;">
                         ${file.type.startsWith('video')
-                            ? `<video src="${e.target.result}" style="width:100%; border-radius:10px; max-height:400px; object-fit:contain;" controls></video>`
+                            ? `<video style="width:100%; border-radius:10px;" controls muted playsinline loop preload="auto"><source src="${e.target.result}" type="video/mp4"></video>`
                             : `<img src="${e.target.result}" style="width:100%; border-radius:10px; max-height:400px; object-fit:contain;">`
                         }
                         <div style="position:absolute; top:10px; right:10px; background:rgba(0,0,0,0.6); width:30px; height:30px; display:flex; justify-content:center; align-items:center; border-radius:50%; cursor:pointer;" 
