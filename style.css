@@ -1,0 +1,524 @@
+/* 
+  ZYLOS - GLOBAL LAYOUT FIX
+  Mobile-First "Phone Simulator" Layout
+*/
+
+:root {
+    --bg-color: #000000;
+    --app-bg: #000000;
+    --desktop-bg: #121212;
+    --text-color: #ffffff;
+    --secondary-text: #a8a8a8;
+    --accent-color: #00d2ff;
+    --accent-gradient: linear-gradient(45deg, #00d2ff, #3a7bd5);
+    --glass-bg: rgba(20, 20, 20, 0.85);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --bottom-nav-height: 65px;
+    --danger-color: #ff4757;
+    --container-width: 460px;
+
+    /* Corner Radius Convention */
+    --radius-container: 20px;
+    --radius-panel: 12px;
+    --radius-btn: 8px;
+    --radius-bubble: 16px;
+}
+
+/* Base Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Roboto, sans-serif;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* 
+   CORE LAYOUT SYSTEM 
+   On Desktop: Body is static dark background. Container is the "Phone" screen.
+   On Mobile: Container fills screen.
+*/
+html,
+body {
+    width: 100%;
+    height: 100%;
+    background-color: var(--desktop-bg);
+    overflow: hidden;
+    /* Global scroll disabled, only container scrolls */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container {
+    width: 100%;
+    height: 100%;
+    background-color: var(--app-bg);
+    position: relative;
+    overflow-y: auto;
+    /* Internal scrolling */
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+    max-width: var(--container-width);
+    box-shadow: 0 0 0 0 transparent;
+}
+
+/* Desktop View Specifics */
+@media (min-width: 500px) {
+    .container {
+        height: 95vh;
+        border-radius: var(--radius-container);
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+        border: 1px solid #333;
+    }
+
+    /* Custom Scrollbar for desktop aesthetic */
+    .container::-webkit-scrollbar {
+        width: 5px;
+    }
+
+    .container::-webkit-scrollbar-thumb {
+        background: #333;
+        border-radius: 10px;
+    }
+
+    .container::-webkit-scrollbar-track {
+        background: transparent;
+    }
+}
+
+/* Hide scrollbar on mobile generally */
+@media (max-width: 499px) {
+    .container::-webkit-scrollbar {
+        display: none;
+    }
+}
+
+
+/* --- GLOBAL COMPONENTS --- */
+
+/* Glass Styles */
+.glass-panel {
+    background: rgba(30, 30, 30, 0.6);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-panel);
+}
+
+.glass-panel-light {
+    background: rgba(40, 40, 40, 0.4);
+}
+
+/* Headers */
+.app-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--glass-border);
+    width: 100%;
+}
+
+.logo-text {
+    font-family: 'Grand Hotel', cursive;
+    font-size: 1.8rem;
+    background: var(--accent-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Navigation */
+.bottom-nav {
+    position: sticky;
+    bottom: 0;
+    width: 100%;
+    height: var(--bottom-nav-height);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    z-index: 1000;
+    background: rgba(0, 0, 0, 0.95);
+    backdrop-filter: blur(20px);
+    border-top: 1px solid var(--glass-border);
+    margin-top: auto;
+    /* Push to bottom if content is short */
+}
+
+/* Ensure Nav stays at bottom even if content scrolls */
+.container {
+    display: flex;
+    flex-direction: column;
+}
+
+#feed-container,
+#reels-container,
+.profile-posts-grid,
+#chat-list,
+.messages-area {
+    flex-grow: 1;
+    /* Pushes nav down */
+}
+
+.nav-item {
+    color: #888;
+    font-size: 1.4rem;
+    transition: transform 0.2s;
+    position: relative;
+}
+
+.nav-item.active {
+    color: var(--accent-color);
+    transform: translateY(-3px);
+}
+
+.nav-item.active::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 4px;
+    background: var(--accent-color);
+    border-radius: 50%;
+    box-shadow: 0 0 5px var(--accent-color);
+}
+
+/* FAB (Floating Action Button) */
+.fab-create-post {
+    position: fixed;
+    /* Relative to viewport usually, but here... */
+    /* Check: sticky inside container or absolute? */
+    /* For "Phone Simulator", absolute inside .container works if container is positioned. */
+    /* However, content scrolling makes absolute scroll too. */
+    /* FIXED is problematic with transform on parent in some browsers, but let's try sticky or absolute bottom of a wrapper. */
+    /* Better: Put FAB inside the container but use sticky positioning or distinct structure */
+}
+
+/* Let's rely on fixed positioning which usually breaks out of overflow:hidden containers but adheres to transform parents on desktop.
+   Since our container might not have transform, it might be partial.
+   Safest: Absolute positioning relative to the Viewport Container (which is effectively the screen).
+*/
+.fab-create-post {
+    position: sticky;
+    bottom: 90px;
+    margin-left: auto;
+    margin-right: 20px;
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    background: var(--accent-gradient);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 5px 20px rgba(0, 210, 255, 0.4);
+    cursor: pointer;
+    z-index: 900;
+    margin-bottom: 20px;
+    /* Space from nav */
+}
+
+
+/* --- PAGE SPECIFIC --- */
+
+/* Feed */
+.post-card {
+    margin: 10px 10px 15px;
+    border-radius: var(--radius-panel);
+    border: 1px solid var(--glass-border);
+    background: rgba(20, 20, 20, 0.4);
+    padding-bottom: 5px;
+}
+
+.post-header {
+    padding: 10px 15px;
+    display: flex;
+    align-items: center;
+}
+
+.user-avatar-sm {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    margin-right: 10px;
+    object-fit: cover;
+    border: 1px solid #333;
+}
+
+.post-media {
+    width: 100%;
+    display: block;
+    max-height: 550px;
+    object-fit: cover;
+    background: #111;
+}
+
+.post-actions {
+    padding: 10px 15px;
+    display: flex;
+    gap: 18px;
+}
+
+.action-icon {
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: transform 0.2s;
+    color: white;
+}
+
+.action-icon:active {
+    transform: scale(0.85);
+}
+
+.liked {
+    color: var(--danger-color);
+}
+
+.post-info {
+    padding: 0 15px;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+/* Reels */
+.reel-full {
+    width: 100%;
+    height: 100%;
+    /* Fill container */
+    height: calc(100vh - var(--bottom-nav-height)) !important;
+    /* Force fit */
+    /* On desktop container height is fixed, so 100% works well if parent is sizing. */
+    position: relative;
+    scroll-snap-align: start;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #000;
+}
+
+#reels-container {
+    height: 100%;
+    overflow-y: scroll;
+    scroll-snap-type: y mandatory;
+    scrollbar-width: none;
+}
+
+.reel-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Profile */
+.profile-top-section {
+    display: flex;
+    align-items: center;
+    padding: 20px 15px 0;
+}
+
+.profile-avatar-lg {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 2px solid #333;
+    padding: 2px;
+    object-fit: cover;
+}
+
+.profile-stats-row {
+    display: flex;
+    flex-grow: 1;
+    justify-content: space-around;
+    text-align: center;
+}
+
+.stat-number {
+    display: block;
+    font-weight: 700;
+    font-size: 1.1rem;
+}
+
+.stat-label {
+    font-size: 0.8rem;
+    color: #888;
+}
+
+.profile-bio-section {
+    padding: 10px 15px;
+}
+
+.profile-actions {
+    padding: 0 15px 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.profile-posts-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    margin-bottom: 2px;
+}
+
+.grid-item {
+    aspect-ratio: 1/1;
+    position: relative;
+    overflow: hidden;
+    background: #111;
+}
+
+.img-cover {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: opacity 0.2s;
+}
+
+.grid-item:active .img-cover {
+    opacity: 0.7;
+}
+
+.video-icon-overlay {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    color: white;
+    text-shadow: 0 0 5px black;
+}
+
+/* Messages */
+#chat-list {
+    padding-top: 10px;
+}
+
+.msg-bubble {
+    max-width: 75%;
+    padding: 8px 14px;
+    border-radius: var(--radius-bubble);
+    font-size: 0.95rem;
+    margin-bottom: 4px;
+    word-wrap: break-word;
+}
+
+.msg-sent {
+    align-self: flex-end;
+    background: #3797f0;
+    color: white;
+    border-bottom-right-radius: 4px;
+}
+
+.msg-received {
+    align-self: flex-start;
+    background: #262626;
+    color: white;
+    border-top-left-radius: 4px;
+}
+
+.chat-input-area {
+    padding: 10px 15px;
+    background: #000;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: sticky;
+    bottom: 0;
+}
+
+/* Modals */
+.modal-overlay {
+    position: absolute;
+    /* Relative to container now */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 2000;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(5px);
+}
+
+.modal-overlay.active {
+    display: flex;
+}
+
+.modal-content {
+    background: #1c1c1c;
+    border-radius: var(--radius-panel);
+    width: 85%;
+    max-width: 350px;
+    max-height: 80%;
+    overflow-y: auto;
+    position: relative;
+}
+
+/* Animations */
+@keyframes fadePop {
+    from {
+        opacity: 0;
+        transform: scale(0.9)
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1)
+    }
+}
+
+.fade-in {
+    animation: fadePop 0.3s ease-out;
+}
+
+/* Utilities */
+.flex-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Buttons */
+.btn-primary {
+    background: #3797f0;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: var(--radius-btn);
+    font-weight: 600;
+    width: 100%;
+    cursor: pointer;
+}
+
+.btn-glass {
+    background: #262626;
+    color: white;
+    border: 1px solid #363636;
+    padding: 8px;
+    border-radius: var(--radius-btn);
+    font-weight: 600;
+    width: 100%;
+    cursor: pointer;
+}
+
+.auth-input {
+    background: #262626;
+    border: 1px solid #363636;
+    color: white;
+    padding: 10px;
+    border-radius: var(--radius-btn);
+    width: 100%;
+    margin-bottom: 10px;
+}
